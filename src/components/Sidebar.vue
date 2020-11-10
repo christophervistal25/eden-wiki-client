@@ -37,7 +37,7 @@
               <div class="px-2 py-2 bg-white rounded-md shadow-lg">
                 <div v-for="(sub, i) in menuItem.sub_category" v-bind:key="i">
                   <router-link
-                    :to="`/docs/${menuItem.name.toLowerCase()}/${sub.kind
+                    :to="`/docs/${menuItem.name.toLowerCase()}/${sub.name
                       .replace('IK3_', '')
                       .toLowerCase()}/1`"
                   >
@@ -46,7 +46,7 @@
                     >
                       <span>&#9862;</span>
                       {{
-                        sub.kind
+                        sub.name
                           .replace("IK3_", "")
                           .replace("TEXT", "")
                           .replace(/_/g, " ")
@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     getMenuItems() {
-      axios.get("collection/types").then((response) => {
+      axios.get("category").then((response) => {
         this.menu = response.data;
         this.initDropdowns(this.menu);
       });

@@ -1,9 +1,5 @@
 <template>
-  <div
-    v-show="display"
-    class="fixed z-10 inset-0 overflow-y-auto"
-    @keyup.esc="test"
-  >
+  <div v-show="display" class="fixed z-10 inset-0 overflow-y-auto">
     <div
       class="items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
     >
@@ -106,9 +102,22 @@
                 <div
                   class="shadow max-w-screen-lg px-2 bg-white rounded-lg mt-2"
                 >
-                  <h2 class="rounded py-4 px-4 mb-1 cursor-pointer">
-                    <span class="font-semibold">{{ item.category.name }}</span>
-                    / {{ item.name }}
+                  <h2 class="rounded py-4 capitalize px-4 mb-1 cursor-pointer">
+                    <span class="font-semibold"
+                      >{{ item.sub_category.category.name }}
+                    </span>
+                    /
+                    <span
+                      >{{
+                        item.sub_category.name
+                          .replace("IK3", "")
+                          .replace(/_/gi, " ")
+                          .replace("TEXT", "")
+                          .toLowerCase()
+                      }}
+                      /</span
+                    >
+                    {{ item.name }}
                     <br />
                     <span class="text-sm text-gray-600 break-all">{{
                       item.description
@@ -144,14 +153,12 @@ export default {
         .get(`search/item/${this.searchKeyword}`)
         .then((response) => {
           this.searchProcess = false;
-          console.log(response.data);
           this.items = response.data;
         })
         .catch(() => {
           this.searchProcess = false;
         });
     },
-    test() {},
   },
 };
 </script>

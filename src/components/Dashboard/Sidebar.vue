@@ -21,33 +21,37 @@
       <!-- Links -->
 
       <li class="mt-3 p-2 text-blue-600 dark:text-blue-300 rounded-lg">
-        <a href="teacher-dashboard/" class="flex flex-col items-center">
-          <svg class="fill-current h-5 w-5" viewBox="0 0 24 24">
-            <path
-              d="M19 5v2h-4V5h4M9 5v6H5V5h4m10 8v6h-4v-6h4M9
+        <router-link to="/admin">
+          <a class="flex flex-col items-center">
+            <svg class="fill-current h-5 w-5" viewBox="0 0 24 24">
+              <path
+                d="M19 5v2h-4V5h4M9 5v6H5V5h4m10 8v6h-4v-6h4M9
 							17v2H5v-2h4M21 3h-8v6h8V3M11 3H3v10h8V3m10
 							8h-8v10h8V11m-10 4H3v6h8v-6z"
-            ></path>
-          </svg>
-          <span class="text-xs mt-2">dashBoard</span>
-        </a>
+              ></path>
+            </svg>
+            <span class="text-xs mt-2 capitalize">dashboard</span>
+          </a>
+        </router-link>
       </li>
 
       <li
         class="mt-3 p-2 hover:text-blue-600 dark-hover:text-blue-300 rounded-lg"
       >
-        <a href="inbox/" class="flex flex-col items-center">
-          <svg class="fill-current h-5 w-5" viewBox="0 0 24 24">
-            <path
-              d="M23 3v-.5a2.5 2.5 0 00-5 0V3c-.55 0-1 .45-1 1v4c0
+        <router-link to="/admin/items">
+          <a class="flex flex-col items-center">
+            <svg class="fill-current h-5 w-5" viewBox="0 0 24 24">
+              <path
+                d="M23 3v-.5a2.5 2.5 0 00-5 0V3c-.55 0-1 .45-1 1v4c0
 							.55.45 1 1 1h5c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1m-1
 							0h-3v-.5c0-.83.67-1.5 1.5-1.5s1.5.67 1.5 1.5V3M6
 							11h9v2H6v-2m0-4h9v2H6V7m16 4v5c0 1.11-.89 2-2 2H6l-4
 							4V4a2 2 0 012-2h11v2H4v13.17L5.17 16H20v-5h2z"
-            ></path>
-          </svg>
-          <span class="text-xs mt-2">messages</span>
-        </a>
+              ></path>
+            </svg>
+            <span class="text-xs mt-2 capitalize">Items</span>
+          </a>
+        </router-link>
       </li>
 
       <li
