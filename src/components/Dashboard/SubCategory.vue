@@ -248,6 +248,7 @@ import axios from "axios";
 import Modal from "./Modal.vue";
 import swal from "sweetalert";
 import moment from "moment";
+import { config } from "../../custom/auth.js";
 export default {
   data() {
     return {
@@ -308,7 +309,7 @@ export default {
     },
     addSubCategory() {
       axios
-        .post("sub-category/create", this.category)
+        .post("sub-category/create", this.category, config)
         .then((response) => {
           if (response.status === 200) {
             this.sub_categories.unshift(response.data);
@@ -332,7 +333,8 @@ export default {
       axios
         .put(
           `sub-category/edit/${this.selected_category.id}`,
-          this.selected_category
+          this.selected_category,
+          config
         )
         .then((response) => {
           if (response.status === 200) {

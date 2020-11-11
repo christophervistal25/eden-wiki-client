@@ -211,14 +211,15 @@
       <select
         id="add-item-category-and-sub"
         v-model="item.sub_category_id"
-        class="appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline mb-3"
+        class="appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 rounded shadow leading-tight focus:outline-none focus:shadow-outline mb-3 capitalize"
       >
         <option
           v-for="sub_category in sub_categories"
           v-bind:key="sub_category.id"
           :value="`${sub_category.id}`"
         >
-          {{ sub_category.category.name }} / {{ sub_category.name }}
+          {{ sub_category.category.name }} /
+          {{ sub_category.name.toLowerCase() }}
         </option>
       </select>
     </template>
@@ -351,6 +352,7 @@ import Modal from "../components/Dashboard/Modal.vue";
 import axios from "axios";
 import moment from "moment";
 import swal from "sweetalert";
+import { config } from "../custom/auth.js";
 
 export default {
   data() {
@@ -390,7 +392,7 @@ export default {
     },
     addNewItem() {
       axios
-        .post("create/item", this.item)
+        .post("create/item", this.item, config)
         .then((response) => {
           if (response.status === 200) {
             this.errors = [];
@@ -402,7 +404,6 @@ export default {
         })
         .catch((err) => {
           if (err.response.status === 422) {
-            this.addNewItemDisplay = false;
             this.errors = err.response.data;
           }
         });
@@ -413,7 +414,7 @@ export default {
     },
     updateItem() {
       axios
-        .put(`item/edit/${this.selected_item.id}`, this.selected_item)
+        .put(`item/edit/${this.selected_item.id}`, this.selected_item, config)
         .then((response) => {
           if (response.status === 200) {
             this.errors = [];
@@ -443,9 +444,9 @@ export default {
   },
   created() {
     this.getItems();
-    axios.get(`sub-categories`).then((response) => {
-      this.sub_categories = response.data;
-    });
+    axios
+      .get(`sub-categories`)
+      .then((response) => (this.sub_categories = response.data));
   },
 };
 </script>

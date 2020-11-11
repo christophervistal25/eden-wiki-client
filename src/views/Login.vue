@@ -16,7 +16,7 @@
 
           <form @submit.prevent="login" class="flex flex-col pt-3 md:pt-8">
             <div
-              v-if="display"
+              v-if="displayErrorMessage"
               class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
               role="alert"
             >
@@ -93,30 +93,25 @@ export default {
   data() {
     return {
       username: "chris@yahoo.com",
-      password: "admin",
-      display: false,
+      password: "1234",
+      displayErrorMessage: false,
     };
   },
   components: {},
   methods: {
     login() {
       if (!this.username || !this.password) {
-        this.display = true;
+        this.displayErrorMessage = true;
       }
 
-      if (!this.display) {
+      if (!this.displayErrorMessage) {
         axios
           .post(`login`, {
             email: this.username,
             password: this.password,
           })
-          .then(() => {
-            this.$router.push("/admin");
-            // console.log(response.data);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+          .then(() => this.$router.push("/admin"))
+          .catch((err) => console.log(err));
       }
     },
   },

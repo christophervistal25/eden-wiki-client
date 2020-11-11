@@ -10,6 +10,7 @@
           <span class="font-semibold">hello,</span>
           <span>Administrator!</span>
         </div>
+        <widgets></widgets>
 
         <div class="flex">
           <div
@@ -51,6 +52,7 @@
       </main>
     </div>
   </div>
+
   <modal :display="editCategoryDisplay">
     <template v-slot:header>
       <h3 class="text-lg leading-6 font-medium text-gray-900 mb-2">
@@ -182,9 +184,11 @@
 import Sidebar from "../components/Dashboard/Sidebar.vue";
 import CategoryTable from "../components/Dashboard/Table.vue";
 import SubCategory from "../components/Dashboard/SubCategory.vue";
+import Widgets from "../components/Dashboard/Widgets.vue";
 import Modal from "../components/Dashboard/Modal.vue";
 import axios from "axios";
 import swal from "sweetalert";
+import { config } from "../custom/auth.js";
 
 export default {
   data() {
@@ -204,6 +208,7 @@ export default {
     CategoryTable,
     SubCategory,
     Modal,
+    Widgets,
   },
   watch: {
     searchCategory(value) {
@@ -234,7 +239,7 @@ export default {
     updateCategory() {
       let id = this.category.id;
       axios
-        .put(`category/edit/${id}`, this.category)
+        .put(`category/edit/${id}`, this.category, config)
         .then((response) => {
           if (response.status === 200) {
             this.editCategoryDisplay = false;
@@ -258,7 +263,7 @@ export default {
     addCategory() {
       this.categoryNew.status = "active";
       axios
-        .post(`category/create`, this.categoryNew)
+        .post(`category/create`, this.categoryNew, config)
         .then((response) => {
           if (response.status === 200) {
             this.addCategoryDisplay = false;
