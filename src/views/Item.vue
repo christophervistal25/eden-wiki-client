@@ -8,9 +8,8 @@
       >
         <div class="flex flex-col capitalize text-3xl">
           <span class="font-semibold">hello,</span>
-          <span>Administrator!</span>
+          <span>{{ name }}</span>
         </div>
-
         <div class="flex">
           <div
             class="mr-6 mt-8 py-2 w-full flex-shrink-0 flex flex-col bg-white dark:bg-gray-600 rounded-lg"
@@ -65,17 +64,17 @@
                       {{ item.description }}
                     </td>
                     <td
-                      class="border px-4 py-2 capitalize text-sm text-gray-800 text-center capitalize"
+                      class="border px-4 py-2 capitalize text-gray-800 text-center capitalize"
                     >
                       {{ item.gender }}
                     </td>
                     <td
-                      class="border px-4 py-2 capitalize text-sm text-gray-800 text-center"
+                      class="border px-4 py-2 capitalize text-gray-800 text-center"
                     >
                       {{ item.level }}
                     </td>
                     <td
-                      class="border px-4 py-2 capitalize text-sm text-gray-800 text-center"
+                      class="border px-4 py-2 capitalize text-gray-800 text-center"
                     >
                       {{ item.job }}
                     </td>
@@ -352,7 +351,6 @@ import Modal from "../components/Dashboard/Modal.vue";
 import axios from "axios";
 import moment from "moment";
 import swal from "sweetalert";
-import { config } from "../custom/auth.js";
 
 export default {
   data() {
@@ -392,7 +390,7 @@ export default {
     },
     addNewItem() {
       axios
-        .post("create/item", this.item, config)
+        .post("create/item", this.item)
         .then((response) => {
           if (response.status === 200) {
             this.errors = [];
@@ -414,7 +412,7 @@ export default {
     },
     updateItem() {
       axios
-        .put(`item/edit/${this.selected_item.id}`, this.selected_item, config)
+        .put(`item/edit/${this.selected_item.id}`, this.selected_item)
         .then((response) => {
           if (response.status === 200) {
             this.errors = [];
@@ -447,6 +445,11 @@ export default {
     axios
       .get(`sub-categories`)
       .then((response) => (this.sub_categories = response.data));
+  },
+  computed: {
+    name() {
+      return localStorage.getItem("name");
+    },
   },
 };
 </script>

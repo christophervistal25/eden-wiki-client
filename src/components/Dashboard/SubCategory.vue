@@ -248,7 +248,7 @@ import axios from "axios";
 import Modal from "./Modal.vue";
 import swal from "sweetalert";
 import moment from "moment";
-import { config } from "../../custom/auth.js";
+
 export default {
   data() {
     return {
@@ -258,20 +258,17 @@ export default {
       category: {
         name: "",
         category_id: "",
-        status: "active",
       },
       selected_category: {
         name: "",
         category_id: "",
-        status: "active",
+        status: "",
       },
       openEditModalDisplay: false,
       errors: [],
       searchSubCategory: "",
+      categories: [],
     };
-  },
-  props: {
-    categories: Array,
   },
   components: {
     Modal,
@@ -289,8 +286,13 @@ export default {
     },
   },
   methods: {
+    getCategories() {
+      axios
+        .get("admin/category/sub")
+        .then((response) => (this.categories = response.data));
+    },
     getSubCategories() {
-      axios.get("sub-categories").then((response) => {
+      axios.get("admin/sub-categories").then((response) => {
         this.sub_categories = response.data;
         this.sub_categories_filter = response.data;
       });
@@ -309,18 +311,21 @@ export default {
     },
     addSubCategory() {
       axios
-        .post("sub-category/create", this.category, config)
+        .post("admin/sub-category/create", this.category)
         .then((response) => {
           if (response.status === 200) {
             this.sub_categories.unshift(response.data);
             this.addNewSubCategoryDisplay = false;
             this.errors = [];
             this.category = {};
+
             swal(
               "Good job!",
               `You Successfully create new sub category.`,
               "success"
             );
+
+            this.$emit("changed");
           }
         })
         .catch((error) => {
@@ -332,19 +337,27 @@ export default {
     updateSubCategory() {
       axios
         .put(
-          `sub-category/edit/${this.selected_category.id}`,
-          this.selected_category,
-          config
+          `admin/sub-category/edit/${this.selected_category.id}`,
+          this.selected_category
         )
         .then((response) => {
           if (response.status === 200) {
             this.openEditModalDisplay = false;
             this.errors = [];
+
             swal(
               "Good job!",
               `You Successfully update sub category.`,
               "success"
             );
+
+            this.sub_categories.map((sub_category, index) => {
+              if (sub_category.id == response.data.id) {
+                this.sub_categories[index] = response.data;
+              }
+            });
+
+            this.$emit("changed");
           }
         })
         .catch((error) => {
@@ -358,6 +371,7 @@ export default {
     },
   },
   created() {
+    this.getCategories();
     this.getSubCategories();
   },
 };

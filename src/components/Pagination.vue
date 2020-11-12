@@ -23,7 +23,17 @@
         <div>
           <p class="text-sm leading-5 text-gray-700">
             Showing
-            <span class="font-medium">{{ page }}</span>
+            <select class="px-5 border border-gray-300" @change="moveTo">
+              <option
+                :selected="page == item"
+                v-for="(item, i) in no_of_items"
+                :key="i"
+                :value="item"
+              >
+                {{ item }}
+              </option>
+            </select>
+            <!-- <span class="font-medium">{{ page }}</span> -->
             to
             <span class="font-medium">{{ no_of_items }}</span>
             of
@@ -53,6 +63,7 @@
                 />
               </svg>
             </a>
+
             <div v-if="no_of_items <= no_of_display">
               <a
                 v-for="(count, i) in no_of_items"
@@ -60,43 +71,65 @@
                 style="cursor: pointer"
                 @click="go(count)"
                 :class="count == page ? 'bg-gray-300' : ''"
-                class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                class="cursor-pointer -ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
               >
                 {{ count }}
               </a>
             </div>
             <div v-else>
-              <!-- v-if="count >= page" -->
-              <span v-for="(count, i) in no_of_display" v-bind:key="i">
+              <!-- no_of_display < no_of_items - 1
+                      ? count >= page
+                      : count <= total_items &&
+                        count >= no_of_items - 10 &&
+                        count <= no_of_items -->
+              <!-- !start.includes(parseInt(count)) &&
+                    
+                      ? count >= page
+                      : count >= no_of_items - 4 && count <= no_of_items - 2 -->
+              <span v-for="(c, k) in 2" v-bind:key="k">
                 <a
-                  style="cursor: pointer"
+                  @click="go(c)"
+                  :class="c == page ? 'bg-gray-300' : ''"
+                  class="cursor-pointer -ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                >
+                  {{ c }}
+                </a>
+              </span>
+
+              <span class="mr-5"></span>
+
+              <span v-for="(count, i) in no_of_items - 2" v-bind:key="i">
+                <a
+                  v-if="
+                    ![1, 2].includes(parseInt(count)) &&
+                    count >= parseInt(page) - 1 &&
+                    count <= parseInt(page) + 4
+                  "
                   @click="go(count)"
                   :class="count == page ? 'bg-gray-300' : ''"
-                  class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                  class="cursor-pointer -ml-px relative inline-flex items-center px-4 py-2 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
                 >
                   {{ count }}
                 </a>
               </span>
 
-              <a
-                style="cursor: pointer"
-                class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-              >
-                ...
-              </a>
+              <span class="ml-5"></span>
 
-              <a
-                style="cursor: pointer"
-                class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
-              >
-                {{ no_of_items }}
-              </a>
+              <span v-for="(c, z) in no_of_items" :key="z">
+                <a
+                  v-if="[no_of_items - 1, no_of_items].includes(parseInt(c))"
+                  @click="go(c)"
+                  :class="c == page ? 'bg-gray-300' : ''"
+                  class="cursor-pointer -ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 hover:text-gray-500 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+                >
+                  {{ c }}
+                </a>
+              </span>
             </div>
 
             <a
-              style="cursor: pointer"
-              @click="next"
-              class="-ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+              @click="next()"
+              class="cursor-pointer -ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
               aria-label="Next"
             >
               <!-- Heroicon name: chevron-right -->
@@ -120,19 +153,15 @@
   </div>
 </template>
 <script>
-import axios from "axios";
 export default {
   props: {
     no_of_items: {
-      type: Number,
       required: true,
     },
     main: {
-      type: String,
       required: true,
     },
     type: {
-      type: String,
       required: true,
     },
     total_items: {
@@ -150,33 +179,28 @@ export default {
   },
   data() {
     return {
-      no_of_display: 10,
+      no_of_display: 5,
     };
   },
   watch: {
-    page(pageNumber) {
-      this.get(pageNumber);
-    },
+    page() {},
   },
   methods: {
-    get(page) {
-      axios
-        .get(`item/${this.main}/${this.type}/${page}`)
-        .then((response) => this.$emit("on-data-changed", response.data));
+    moveTo(e) {
+      let page = e.target.value;
+      this.$router.push(`/docs/${this.main}/${this.type}/${page}`);
     },
     go(page) {
       this.$router.push(`/docs/${this.main}/${this.type}/${page}`);
     },
     next() {
       if (this.next_link != null) {
-        let link = this.next_link.replace("item", "docs");
-        this.$router.push(`/${link}`);
+        this.$router.push(`/${this.next_link.replace("item", "docs")}`);
       }
     },
     previous() {
       if (this.previous_link != null) {
-        let link = this.previous_link.replace("item", "docs");
-        this.$router.push(`/${link}`);
+        this.$router.push(`/${this.previous_link.replace("item", "docs")}`);
       }
     },
   },

@@ -2,7 +2,7 @@
   <search-modal :display="open"></search-modal>
   <navbar @keyup="keyboardEvent"></navbar>
   <sidebar></sidebar>
-  <div class="docs w-64">
+  <div class="docs w-64 mt-12">
     <!-- <h1>This is the docs is for {{ main }} with sub {{ type }}.</h1> -->
     <div class="w-64">
       <div
@@ -67,22 +67,22 @@
           </div>
         </div>
       </div>
-      <!-- <pagination
-        :no_of_items="pagination"
+
+      <pagination
+        :no_of_items="pagination_total"
         :total_items="total_items"
         :page="page"
         :main="main"
         :type="type"
         :next_link="next_link"
         :previous_link="previous_link"
-        @on-data-changed="processNewData"
-      ></pagination> -->
+      ></pagination>
     </div>
   </div>
 </template>
 <script>
 import axios from "axios";
-// import Pagination from "../components/Pagination.vue";
+import Pagination from "../components/Pagination.vue";
 import Sidebar from "../components/Sidebar.vue";
 import Navbar from "../components/Navbar.vue";
 import SearchModal from "../components/SearchModal.vue";
@@ -97,12 +97,12 @@ export default {
       previous_link: "",
       total_items: 0,
       data: [],
-      pagination: 0,
+      pagination_total: 0,
       open: false,
     };
   },
   components: {
-    // Pagination,
+    Pagination,
     Sidebar,
     Navbar,
     SearchModal,
@@ -112,7 +112,7 @@ export default {
       axios
         .get(`item/${this.main}/${this.type}/${this.page}`)
         .then((response) => {
-          this.pagination = response.data.pagination_total;
+          this.pagination_total = response.data.pagination_total;
           this.total_items = response.data.total_items;
           this.next_link = response.data.next_link;
           this.previous_link = response.data.previous_link;
@@ -126,9 +126,9 @@ export default {
         this.open = !this.open;
       }
     },
-    processNewData(data) {
-      this.data = data.items;
-    },
+    // processNewData(data) {
+    //   this.data = data.items;
+    // },
   },
   watch: {
     $route(to) {

@@ -110,7 +110,13 @@ export default {
             email: this.username,
             password: this.password,
           })
-          .then(() => this.$router.push("/admin"))
+          .then((response) => {
+            console.log("store data in local storage");
+            localStorage.setItem("name", response.data.name);
+            localStorage.setItem("email", response.data.email);
+            localStorage.setItem("token", response.data.token);
+            this.$router.push("/admin");
+          })
           .catch((err) => console.log(err));
       }
     },
