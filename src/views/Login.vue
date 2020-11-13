@@ -111,9 +111,7 @@ export default {
             password: this.password,
           })
           .then((response) => {
-            console.log("store data in local storage");
             localStorage.setItem("name", response.data.name);
-            localStorage.setItem("email", response.data.email);
             localStorage.setItem("token", response.data.token);
             this.$router.push("/admin");
           })

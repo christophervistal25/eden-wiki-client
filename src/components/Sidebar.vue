@@ -1,40 +1,48 @@
 <template>
   <div
-    class="shadow-lg flex flex-col w-full md:w-64 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0"
+    class="flex flex-col fixed mt-12 h-screen w-full md:w-64 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0 rounded"
   >
-    <div
-      class="flex-shrink-0 px-8 py-4 flex flex-row items-center justify-between"
+    <nav
+      class="flex-grow md:block px-4 pb-4 md:pb-0 md:overflow-y-auto"
+      @mouseleave="closeMenu"
     >
-      <a
-        href="#"
-        class="font-body text-lg font-semibold tracking-widest text-gray-900 uppercase rounded-lg dark-mode:text-white"
-        >EDEN FLYFF WIKI</a
-      >
-      <button
-        class="rounded-lg md:hidden rounded-lg focus:outline-none focus:shadow-outline"
-      ></button>
-    </div>
-    <nav class="flex-grow md:block px-4 pb-4 md:pb-0 md:overflow-y-auto">
       <div class="relative">
         <div v-for="(menuItem, index) in menu" v-bind:key="index">
-          <button
-            @click="changeMenuStatus(index)"
-            class="flex flex-row items-center w-full px-4 py-2 mt-2 text-left bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:focus:bg-gray-600 dark-mode:hover:bg-gray-600 md:block hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
-          >
-            <span class="menu__title">{{ menuItem.name }}</span>
-          </button>
           <div
-            x-transition:enter="transition ease-out duration-100"
-            x-transition:enter-start="transform opacity-0 scale-95"
-            x-transition:enter-end="transform opacity-100 scale-100"
-            x-transition:leave="transition ease-in duration-75"
-            x-transition:leave-start="transform opacity-100 scale-100"
-            x-transition:leave-end="transform opacity-0 scale-95"
+            @mouseenter="changeMenuStatus(index)"
+            class="cursor-pointer w-full px-4 py-2 mt-2 text-left bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:focus:bg-gray-600 dark-mode:hover:bg-gray-600 md:block hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+          >
+            <router-link :to="`/docs/${menuItem.id}`">
+              <button
+                class="bg-grey-light focus:outline-none text-grey-darkest font-bold py-2 px-4 rounded inline-flex items-center"
+              >
+                <svg
+                  class="w-6 h-6 mr-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  ></path>
+                </svg>
+                <span>{{ menuItem.name }}</span>
+              </button>
+            </router-link>
+          </div>
+          <div
             v-if="this.dropStatus[index].status"
-            class="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow-lg"
+            class="absolute right-0 w-full mt-2 origin-top-right rounded-md shadow"
           >
             <div>
-              <div class="px-2 py-2 bg-white rounded-md shadow-lg">
+              <div
+                class="px-2 py-2 bg-white rounded-md"
+                @mouseleave="closeMenu"
+              >
                 <div v-for="(sub, i) in menuItem.sub_category" v-bind:key="i">
                   <router-link
                     :to="`/docs/${menuItem.name.toLowerCase()}/${sub.name
@@ -42,16 +50,10 @@
                       .toLowerCase()}/1`"
                   >
                     <a
-                      class="block px-4 py-2 mt-2 text-sm bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline menu__sub__title"
+                      class="block px-4 py-2 mt-2 text-sm bg-transparent rounded-lg dark-mode:bg-transparent dark-mode:hover:bg-gray-600 dark-mode:focus:bg-gray-600 dark-mode:focus:text-white dark-mode:hover:text-white dark-mode:text-gray-200 md:mt-0 hover:text-gray-900 focus:text-gray-900 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none focus:shadow-outline capitalize"
                     >
                       <span>&#9862;</span>
-                      {{
-                        sub.name
-                          .replace("IK3_", "")
-                          .replace("TEXT", "")
-                          .replace(/_/g, " ")
-                          .toLowerCase()
-                      }}
+                      {{ sub.name.toLowerCase() }}
                     </a>
                   </router-link>
                 </div>
@@ -75,7 +77,7 @@ export default {
   },
   methods: {
     getMenuItems() {
-      axios.get("category").then((response) => {
+      axios.get("user/category").then((response) => {
         this.menu = response.data;
         this.initDropdowns(this.menu);
       });
@@ -97,6 +99,9 @@ export default {
         }
       });
     },
+    closeMenu() {
+      this.dropStatus.forEach((drop) => (drop.status = false));
+    },
   },
   created() {
     this.getMenuItems();
@@ -104,9 +109,3 @@ export default {
 };
 </script>
 
-<style scoped>
-.menu__title,
-.menu__sub__title {
-  text-transform: capitalize;
-}
-</style>

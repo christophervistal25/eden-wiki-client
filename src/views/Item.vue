@@ -21,7 +21,7 @@
             </h3>
 
             <div>
-              <span class="text-sm text-gray-500 ml-5"
+              <span class="text-sm text-gray-700 ml-5"
                 >Don't forget to press (ENTER) key after you typed.</span
               >
               <br />
@@ -60,7 +60,7 @@
                 </thead>
                 <tbody v-if="items.length != 0">
                   <tr v-for="item in items" v-bind:key="item.id">
-                    <td class="border px-4 py-2 capitalize">
+                    <td class="border px-4 py-2 capitalize text-sm">
                       {{ item.name }}
                     </td>
                     <td
@@ -69,12 +69,12 @@
                       {{ item.description }}
                     </td>
                     <td
-                      class="border px-4 py-2 capitalize text-gray-800 text-center capitalize"
+                      class="border px-4 py-2 capitalize text-gray-800 text-center capitalize text-sm"
                     >
                       {{ item.gender }}
                     </td>
                     <td
-                      class="border px-4 py-2 capitalize text-gray-800 text-center"
+                      class="border px-4 py-2 capitalize text-gray-800 text-center text-sm"
                     >
                       {{ item.level }}
                     </td>
@@ -108,7 +108,7 @@
                       </small>
                     </td>
 
-                    <td class="border px-4 py-2 text-center">
+                    <td class="border px-4 py-2 text-center text-sm">
                       {{ formatDate(item.created_at) }}
                     </td>
 
@@ -147,6 +147,7 @@
 
               <div
                 class="bg-white px-4 pt-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
+                v-if="!isSearch"
               >
                 <div class="flex-1 flex justify-between sm:hidden">
                   <a
@@ -444,6 +445,7 @@ export default {
       errors: [],
       item: {},
       selected_item: {},
+      itemBeforeEdit: {},
       searchItem: "",
 
       page: 1,
@@ -452,6 +454,8 @@ export default {
       pagination_total: 0,
       prevPage: "",
       nextPage: "",
+
+      isSearch: false,
     };
   },
   components: {
@@ -477,15 +481,16 @@ export default {
         this.nextPage = response.data.next;
         this.prevPage = response.data.previous;
         this.items = response.data.items;
+        this.isSearch = false;
       });
     },
     addNewItem() {
       axios
-        .post("create/item", this.item)
+        .post("admin/create/item", this.item)
         .then((response) => {
           if (response.status === 200) {
             this.errors = [];
-            this.addNewItemDisplay = true;
+            this.addNewItemDisplay = false;
             this.item = {};
             this.items.unshift(response.data);
             swal("Good job!", "You Successfully add new item.", "success");
@@ -499,15 +504,23 @@ export default {
     },
     editItem(selected_item) {
       this.selected_item = selected_item;
+      this.itemBeforeEdit = Object.assign({}, this.selected_item);
       this.editItemDisplay = true;
     },
     updateItem() {
       axios
-        .put(`item/edit/${this.selected_item.id}`, this.selected_item)
+        .put(`admin/item/edit/${this.selected_item.id}`, this.selected_item)
         .then((response) => {
           if (response.status === 200) {
             this.errors = [];
             this.editItemDisplay = false;
+
+            this.items.map((item, index) => {
+              if (item.id == response.data.id) {
+                this.items[index] = response.data;
+              }
+            });
+
             this.selected_item = {};
             swal("Good job!", "You Successfully update item.", "success");
           }
@@ -520,6 +533,8 @@ export default {
     },
     search() {
       if (this.searchItem) {
+        this.isSearch = true;
+        this.items = [];
         axios
           .get(`admin/search/item/name/${this.searchItem}`)
           .then((response) => (this.items = response.data.items));
@@ -528,6 +543,7 @@ export default {
     closeEditModal() {
       this.errors = [];
       this.editItemDisplay = false;
+      Object.assign(this.selected_item, this.itemBeforeEdit);
     },
     closeAddModal() {
       this.addNewItemDisplay = false;
@@ -550,7 +566,7 @@ export default {
   created() {
     this.getItems();
     axios
-      .get(`sub-categories`)
+      .get(`admin/sub-categories`)
       .then((response) => (this.sub_categories = response.data));
   },
   computed: {},

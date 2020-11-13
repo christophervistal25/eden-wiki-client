@@ -149,8 +149,9 @@ export default {
   methods: {
     search() {
       this.searchProcess = true;
+      this.items = [];
       axios
-        .get(`search/item/${this.searchKeyword}`)
+        .get(`user/search/item/${this.searchKeyword}`)
         .then((response) => {
           this.searchProcess = false;
           this.items = response.data;

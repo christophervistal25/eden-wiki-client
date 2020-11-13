@@ -309,6 +309,7 @@ export default {
       categories: [],
       temp_categories: [],
       category: {},
+      categoryBeforeEdit: {},
       categoryCreate: {
         sub_category_count: 0,
         status: "active",
@@ -341,6 +342,7 @@ export default {
       axios.get("admin/category").then((response) => {
         this.categories = response.data;
         this.temp_categories = response.data;
+        this.$emit("category-count", response.data.length);
       });
     },
 
@@ -358,7 +360,7 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             this.displayAddModal = false;
-            this.categories.unshift(this.categoryCreate);
+            this.categories.unshift(response.data);
             this.categoryCreate = {};
             this.errors = [];
 
@@ -379,9 +381,11 @@ export default {
       this.displayEditModal = true;
       this.category = category;
       this.errors = {};
+      this.categoryBeforeEdit = Object.assign({}, this.category);
     },
     editClose() {
       this.displayEditModal = false;
+      Object.assign(this.category, this.categoryBeforeEdit);
       this.category = {};
       this.errors = {};
     },
@@ -391,8 +395,8 @@ export default {
         .then((response) => {
           if (response.status === 200) {
             this.displayEditModal = false;
-            this.category = {};
             this.errors = [];
+            this.category = {};
             swal("Good job!", "You Successfully update a category.", "success");
           }
         })

@@ -10,7 +10,7 @@ axios.defaults.baseURL = 'http://localhost:8000/api/'
 //     baseURL: 'http://localhost:8000/api/'
 // })
 
-
+let isRefreshing = false;
 
 axios.interceptors.request.use((config) => {
     config.headers.authorization = `Bearer ${localStorage.getItem('token')}`;
@@ -25,7 +25,15 @@ axios.interceptors.response.use(function (response) {
     return response;
 }, function (error) {
     if (error.response.status == 401 && error.response.data.message == 'token_expired') {
-        // refresh token.
+        if (!isRefreshing) {
+            isRefreshing = true;
+            axios.post('token/refresh').then((response) => {
+                localStorage.setItem("token", response.data.token);
+                router.go();
+            });
+        }
+    } else if (error.response.status == 401 && error.response.data.message != 'token_expired') {
+        router.replace('/admin/login');
     }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error

@@ -350,6 +350,8 @@ export default {
         status: "",
       },
 
+      beforeEditSelectedCategory: {},
+
       addNewSubCategoryDisplay: false,
       openEditModalDisplay: false,
       errors: [],
@@ -386,14 +388,20 @@ export default {
       axios.get("admin/sub-categories").then((response) => {
         this.sub_categories = response.data;
         this.sub_categories_filter = response.data;
+        this.$emit("sub-category-count", response.data.length);
       });
     },
     edit(selected_category) {
       this.selected_category = selected_category;
+      this.beforeEditSelectedCategory = Object.assign(
+        {},
+        this.selected_category
+      );
       this.openEditModalDisplay = true;
     },
     closeEditModal() {
       this.openEditModalDisplay = false;
+      Object.assign(this.selected_category, this.beforeEditSelectedCategory);
       this.errors = [];
     },
     closeAddModal() {

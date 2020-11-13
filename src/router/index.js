@@ -4,8 +4,26 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/',
+    path: '/docs',
     component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue')
+  },
+  {
+    path: '/docs/:main/:type/:page',
+    name: 'Docs',
+    props: true,
+    query: {
+      main: '',
+      type: '',
+      page: 1,
+    },
+    component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue')
+  },
+  {
+    path: '/docs/:id',
+    name: 'DocsMenu',
+    props: true,
+    query: { id: 1 },
+    component: () => import(/* webpackChunkName: "about" */ '../views/DocsMenu.vue')
   },
   {
     path: '/admin/login',
@@ -31,15 +49,12 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
   },
   {
-    path: '/docs/:main?/:type?/:page?',
-    name: 'Docs',
-    props: true,
-    query: {
-      main: '',
-      type: '',
-      page: 1,
-    },
-    component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue')
+    path: "/:catchAll(.*)",
+    name: "NotFound",
+    component: () => import(/* webpackChunkName: "about" */ '../views/errors/PageNotFound.vue'),
+    meta: {
+      requiresAuth: false
+    }
   }
 ]
 

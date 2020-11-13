@@ -6,11 +6,15 @@
       <main
         class="my-1 pt-2 pb-2 px-10 flex-1 bg-gray-200 dark:bg-black rounded-l-lg transition duration-500 ease-in-out overflow-y-auto"
       >
-        <div class="flex flex-col capitalize text-3xl">
+        <div class="flex flex-col capitalize text-2xl">
           <span class="font-semibold">hello,</span>
-          <span>{{ name }}</span>
+          <span>{{ name }} Administrator</span>
         </div>
-        <widgets></widgets>
+        <br />
+        <widgets
+          :no_of_categories="categoryCount"
+          :no_sub_categories="subCategoryCount"
+        ></widgets>
 
         <div class="flex">
           <div
@@ -24,13 +28,17 @@
             <div class="flex flex-col px-5 py-3">
               <category-table
                 :changed="updatedRecordInSubCategory"
+                @category-count="noOfCategory"
               ></category-table>
             </div>
           </div>
         </div>
 
         <div class="flex">
-          <sub-category @changed="updateCategory"></sub-category>
+          <sub-category
+            :changed="updateCategory"
+            @sub-category-count="noOfSubCategory"
+          ></sub-category>
         </div>
       </main>
     </div>
@@ -42,11 +50,13 @@ import Sidebar from "../components/Dashboard/Sidebar.vue";
 import CategoryTable from "../components/Dashboard/Table.vue";
 import SubCategory from "../components/Dashboard/SubCategory.vue";
 import Widgets from "../components/Dashboard/Widgets.vue";
-
+import axios from "axios";
 export default {
   data() {
     return {
       updatedRecordInSubCategory: 0,
+      categoryCount: 0,
+      subCategoryCount: 0,
     };
   },
   components: {
@@ -64,6 +74,19 @@ export default {
     updateCategory() {
       this.updatedRecordInSubCategory++;
     },
+    noOfCategory(no_of_category) {
+      this.categoryCount = no_of_category;
+    },
+    noOfSubCategory(no_of_sub_category) {
+      this.subCategoryCount = no_of_sub_category;
+    },
+  },
+  created() {
+    if (!localStorage.getItem("name")) {
+      axios
+        .get(`me`)
+        .then((response) => localStorage.setItem("name", response.data.name));
+    }
   },
 };
 </script>

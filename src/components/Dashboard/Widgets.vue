@@ -34,7 +34,7 @@
                 Categories
               </p>
               <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                0
+                {{ no_of_categories }}
               </p>
             </div>
           </div>
@@ -67,7 +67,7 @@
                 Sub Categories
               </p>
               <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                0
+                {{ no_sub_categories }}
               </p>
             </div>
           </div>
@@ -100,7 +100,7 @@
                 Items
               </p>
               <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                0
+                {{ no_of_items }}
               </p>
             </div>
           </div>
@@ -133,7 +133,7 @@
                 Total
               </p>
               <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">
-                0
+                {{ no_of_items + no_sub_categories + no_of_categories }}
               </p>
             </div>
           </div>
@@ -143,18 +143,21 @@
   </div>
 </template>
 <script>
+import axios from "axios";
 export default {
-  /*  props: {
-    no_of_categories: {
-      required: true,
-    },
-    no_sub_categories: {
-      required: true,
-    },
-    no_of_items: {
-      required: true,
-    },
+  props: {
+    no_of_categories: Number,
+    no_sub_categories: Number,
   },
-  */
+  data() {
+    return {
+      no_of_items: 0,
+    };
+  },
+  created() {
+    axios
+      .get("admin/item/count")
+      .then((response) => (this.no_of_items = response.data));
+  },
 };
 </script>
