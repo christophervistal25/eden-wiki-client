@@ -4,9 +4,13 @@ import axios from 'axios'
 import '@/assets/styles/app.css'
 import router from './router'
 
-
-
 axios.defaults.baseURL = 'http://localhost:8000/api/'
+
+// var inceptorInstance = axios.create({
+//     baseURL: 'http://localhost:8000/api/'
+// })
+
+
 
 axios.interceptors.request.use((config) => {
     config.headers.authorization = `Bearer ${localStorage.getItem('token')}`;
@@ -20,7 +24,9 @@ axios.interceptors.response.use(function (response) {
     // Do something with response data
     return response;
 }, function (error) {
-    console.log(error);
+    if (error.response.status == 401 && error.response.data.message == 'token_expired') {
+        // refresh token.
+    }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
     // Do something with response error
     return Promise.reject(error);

@@ -41,7 +41,7 @@
             results
           </p>
         </div>
-        <div>
+        <div class="">
           <nav class="relative z-0 inline-flex shadow-sm">
             <a
               style="cursor: pointer"
@@ -181,9 +181,6 @@ export default {
     return {
       no_of_display: 5,
     };
-  },
-  watch: {
-    page() {},
   },
   methods: {
     moveTo(e) {

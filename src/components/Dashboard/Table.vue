@@ -26,7 +26,10 @@
       </tr>
     </thead>
     <tbody v-if="categories.length">
-      <tr v-for="(category, index) in categories" :key="index">
+      <tr
+        v-for="(category, index) in chunkData[currentChunkDataIndex]"
+        :key="index"
+      >
         <td class="border px-4 py-2 capitalize">{{ category.name }}</td>
         <td class="border px-4 py-2 text-sm text-gray-700">
           {{ category.description }}
@@ -77,11 +80,92 @@
     <tbody v-else>
       <tr>
         <td class="py-2 px-4 text-center border text-red-500" colspan="6">
-          No available data
+          <div class="loadingio-spinner-ripple-gorw4pm31tf">
+            <div class="ldio-z7lwnyf26q">
+              <div></div>
+              <div></div>
+            </div>
+          </div>
         </td>
       </tr>
     </tbody>
   </table>
+  <div
+    class="bg-white px-4 pt-3 flex items-center justify-between border-t border-gray-200 sm:px-6"
+  >
+    <div class="flex-1 flex justify-between sm:hidden">
+      <a
+        @click="previous"
+        class="cursor-pointer relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+      >
+        Previous
+      </a>
+      <a
+        @click="next"
+        class="cursor-pointer ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm leading-5 font-medium rounded-md text-gray-700 bg-white hover:text-gray-500 focus:outline-none focus:shadow-outline-blue focus:border-blue-300 active:bg-gray-100 active:text-gray-700 transition ease-in-out duration-150"
+      >
+        Next
+      </a>
+    </div>
+    <div class="hidden sm:flex-1 sm:flex sm:justify-between">
+      <div>
+        <nav class="inline-flex shadow-sm">
+          <a
+            @click="previous"
+            class="cursor-pointer relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+            aria-label="Previous"
+          >
+            <!-- Heroicon name: chevron-left -->
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+
+          <a
+            class="-ml-px relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-700 focus:z-10"
+          >
+            Showing &nbsp;
+            <span class="font-semibold mr-2">{{
+              currentChunkDataIndex + 1
+            }}</span>
+            to
+            <span class="font-semibold mr-2 ml-2">{{ chunkData.length }}</span>
+            of
+            <span class="semi-bold ml-2">{{ categories.length }}</span>
+          </a>
+
+          <a
+            @click="next"
+            class="cursor-pointer -ml-px relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm leading-5 font-medium text-gray-500 hover:text-gray-400 focus:z-10 focus:outline-none focus:border-blue-300 focus:shadow-outline-blue active:bg-gray-100 active:text-gray-500 transition ease-in-out duration-150"
+            aria-label="Next"
+          >
+            <!-- Heroicon name: chevron-right -->
+            <svg
+              class="h-5 w-5"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fill-rule="evenodd"
+                d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                clip-rule="evenodd"
+              />
+            </svg>
+          </a>
+        </nav>
+      </div>
+    </div>
+  </div>
 
   <modal :display="displayAddModal">
     <template v-slot:header>
@@ -214,6 +298,7 @@ import moment from "moment";
 import axios from "axios";
 import swal from "sweetalert";
 import Modal from "./Modal.vue";
+import { chunk } from "../../custom/helpers.js";
 
 export default {
   components: {
@@ -235,6 +320,9 @@ export default {
 
       displayAddModal: false,
       displayEditModal: false,
+
+      currentChunkDataIndex: 0,
+      perPage: 5,
     };
   },
   props: {
@@ -316,6 +404,7 @@ export default {
     },
     searchCategory(word) {
       if (word) {
+        this.currentChunkIndex = 0;
         this.categories = this.temp_categories.filter((category) =>
           category.name.toLowerCase().includes(word.toLowerCase())
         );
@@ -323,8 +412,27 @@ export default {
         this.categories = this.temp_categories;
       }
     },
+    next() {
+      if (
+        this.currentChunkDataIndex <
+        Math.ceil(this.categories.length / this.perPage) - 1
+      ) {
+        this.currentChunkDataIndex++;
+      }
+    },
+    previous() {
+      if (this.currentChunkDataIndex > 0) {
+        this.currentChunkDataIndex--;
+      }
+    },
+    chunk,
     formatDate(date) {
       return moment(date).format("MMMM Do YYYY, h:mm A");
+    },
+  },
+  computed: {
+    chunkData() {
+      return this.chunk(this.categories, this.perPage);
     },
   },
   created() {
