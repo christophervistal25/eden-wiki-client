@@ -11,7 +11,7 @@
           "
         >
           <span class="text-1xl ml-3 text-gray-800 bg-white px-5 py-1"
-            >Flaris</span
+            >Eden Town</span
           >
         </a>
       </div>

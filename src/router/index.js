@@ -41,6 +41,11 @@ const routes = [
     component: () => import(/* webpackChunkName: "about" */ '../views/Item.vue')
   },
   {
+    path: '/admin/create/category',
+    name: 'CreateCategory',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/AddCategory.vue')
+  },
+  {
     path: '/about',
     name: 'About',
     // route level code-splitting
@@ -50,8 +55,7 @@ const routes = [
   },
   {
     path: "/:catchAll(.*)",
-    name: "NotFound",
-    component: () => import(/* webpackChunkName: "about" */ '../views/errors/PageNotFound.vue'),
+    component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue'),
     meta: {
       requiresAuth: false
     }
@@ -66,6 +70,7 @@ const router = createRouter({
 router.beforeResolve((to) => {
   // If this isn't an initial page load.
   if (to.name) {
+    // NProgress.start()
     // console.log('processing');
   }
 })
@@ -73,6 +78,7 @@ router.beforeResolve((to) => {
 router.afterEach(() => {
   // Complete the animation of the route progress bar.
   // console.log('complete');
+  // NProgress.done()
 })
 
 

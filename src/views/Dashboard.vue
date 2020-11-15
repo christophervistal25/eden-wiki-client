@@ -8,7 +8,7 @@
       >
         <div class="flex flex-col capitalize text-2xl">
           <span class="font-semibold">hello,</span>
-          <span>{{ name }} Administrator</span>
+          <span>Administrator</span>
         </div>
         <br />
         <widgets
@@ -50,7 +50,6 @@ import Sidebar from "../components/Dashboard/Sidebar.vue";
 import CategoryTable from "../components/Dashboard/Table.vue";
 import SubCategory from "../components/Dashboard/SubCategory.vue";
 import Widgets from "../components/Dashboard/Widgets.vue";
-import axios from "axios";
 export default {
   data() {
     return {
@@ -80,13 +79,6 @@ export default {
     noOfSubCategory(no_of_sub_category) {
       this.subCategoryCount = no_of_sub_category;
     },
-  },
-  created() {
-    if (!localStorage.getItem("name")) {
-      axios
-        .get(`me`)
-        .then((response) => localStorage.setItem("name", response.data.name));
-    }
   },
 };
 </script>

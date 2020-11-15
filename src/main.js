@@ -3,8 +3,14 @@ import App from './App.vue'
 import axios from 'axios'
 import '@/assets/styles/app.css'
 import router from './router'
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css';
 
-axios.defaults.baseURL = 'http://localhost:8000/api/'
+
+
+
+// axios.defaults.baseURL = 'http://localhost:8000/api/'
+axios.defaults.baseURL = 'https://eden-wiki.herokuapp.com/api/'
 
 // var inceptorInstance = axios.create({
 //     baseURL: 'http://localhost:8000/api/'
@@ -13,6 +19,7 @@ axios.defaults.baseURL = 'http://localhost:8000/api/'
 let isRefreshing = false;
 
 axios.interceptors.request.use((config) => {
+    NProgress.start();
     config.headers.authorization = `Bearer ${localStorage.getItem('token')}`;
     return config;
 }, (err) => Promise.reject(err));
@@ -20,6 +27,7 @@ axios.interceptors.request.use((config) => {
 
 // Add a response interceptor
 axios.interceptors.response.use(function (response) {
+    NProgress.done();
     // Any status code that lie within the range of 2xx cause this function to trigger
     // Do something with response data
     return response;
@@ -40,4 +48,6 @@ axios.interceptors.response.use(function (response) {
     return Promise.reject(error);
 });
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App)
+app.use(router)
+app.mount('#app')

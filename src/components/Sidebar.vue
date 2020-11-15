@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex flex-col fixed mt-12 h-screen w-full md:w-64 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0 rounded"
+    class="flex flex-col fixed mt-12 h-screen bg-red-500 w-full md:w-64 text-gray-700 bg-white dark-mode:text-gray-200 dark-mode:bg-gray-800 flex-shrink-0 rounded"
   >
     <nav
       class="flex-grow md:block px-4 pb-4 md:pb-0 md:overflow-y-auto"

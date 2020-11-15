@@ -1,12 +1,26 @@
 <template>
   <div
-    class="flex bg-white border-b border-gray-200 fixed top-0 inset-x-0 z-100 h-16 items-center"
+    class="flex bg-white border-b border-gray-200 fixed top-0 inset-x-0 z-100 h-auto py-3 items-center"
   >
     <div class="w-full max-w-screen-xl relative mx-auto px-6">
       <div class="flex items-center -mx-6">
         <div class="lg:w-1/4 xl:w-1/5 pl-6 pr-6 lg:pr-8">
           <div class="flex items-center">
-            <a class="block" href="/docs"> Eden Flyff Wiki </a>
+            <a
+              class="transition duration-500 ease-in-out block text-xl text-green-900 hover:text-green-700"
+              href="/docs"
+            >
+              <svg
+                class="fill-current h-6 inline-block text-green-900 mr-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  d="M16 2h4v15a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V0h16v2zm0 2v13a1 1 0 0 0 1 1 1 1 0 0 0 1-1V4h-2zM2 2v15a1 1 0 0 0 1 1h11.17a2.98 2.98 0 0 1-.17-1V2H2zm2 8h8v2H4v-2zm0 4h8v2H4v-2zM4 4h8v4H4V4z"
+                ></path>
+              </svg>
+              Eden Flyff Wiki
+            </a>
           </div>
         </div>
         <div class="flex flex-grow min-w-0 lg:w-3/4 xl:w-4/5">
@@ -14,7 +28,7 @@
             <div class="relative">
               <button
                 @click="clicked"
-                class="transition-colors duration-100 ease-in-out text-gray-600 py-2 pr-4 pl-10 block w-full appearance-none leading-normal border border-transparent rounded-lg focus:outline-none text-left select-none truncate focus:bg-white focus:border-gray-300 bg-gray-200"
+                class="transition-colors duration-100 ease-in-out text-gray-600 py-2 pr-4 pl-10 block w-full appearance-none leading-normal border border-transparent rounded focus:outline-none text-left select-none truncate focus:bg-white focus:border-gray-300 bg-gray-200"
               >
                 Search
                 <span class="hidden sm:inline"
@@ -71,7 +85,7 @@
             <div class="flex justify-start items-center text-gray-500">
               <a href="https://www.facebook.com/edenflyff" target="_blank">
                 <svg
-                  class="fill w-5 h-5"
+                  class="transition duration-500 ease-in-out fill-current w-5 h-5 text-green-800 hover:text-green-500"
                   viewBox="0 0 512 512"
                   xmlns="http://www.w3.org/2000/svg"
                 >
@@ -83,7 +97,7 @@
 
               <a href="https://edenflyff.com/" target="_blank">
                 <svg
-                  class="ml-5 fill w-5 h-5"
+                  class="ml-5 fill-current w-5 h-5 text-green-800 transition duration-500 ease-in-out hover:text-green-500"
                   viewBox="0 0 512 512.00001"
                   xmlns="http://www.w3.org/2000/svg"
                 >

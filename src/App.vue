@@ -1,18 +1,44 @@
 <template>
-  <div class="md:flex flex-col md:flex-row md:min-h-screen w-auto bg-gray-200">
-    <router-view />
+  <navbar></navbar>
+  <!-- <sidebar></sidebar> -->
+  <div class="bg-gray-100 text-gray-900 tracking-wider leading-normal">
+    <div
+      class="container w-full h-auto flex flex-wrap mx-auto px-2 pt-8 lg:pt-16 mt-2"
+    >
+      <sidebar :menu="menu"></sidebar>
+      <router-view />
+    </div>
   </div>
+  <Footer />
 </template>
 
 <script>
+import Navbar from "./components/Navbar.vue";
+import Sidebar from "./components/Sidebar2.vue";
+import Footer from "./components/Footer.vue";
+import axios from "axios";
 export default {
   data() {
     return {
       open: false,
+      menu: [],
     };
   },
-  components: {},
-  methods: {},
+  components: {
+    Navbar,
+    Sidebar,
+    Footer,
+  },
+  methods: {
+    getMenuItems() {
+      axios.get(`user/category`).then((response) => {
+        this.menu = response.data;
+      });
+    },
+  },
+  created() {
+    this.getMenuItems();
+  },
 };
 </script>
 
