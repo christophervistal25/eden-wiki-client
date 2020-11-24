@@ -5,45 +5,58 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/docs',
+    name: 'DocsMain',
     component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue')
   },
   {
     path: '/docs/:main/:type/:page',
     name: 'Docs',
-    props: true,
-    query: {
-      main: '',
-      type: '',
-      page: 1,
-    },
-    component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/DocsItem.vue')
   },
   {
-    path: '/docs/:id',
+    path: '/docs/:menu/:page',
     name: 'DocsMenu',
-    props: true,
-    query: { id: 1 },
-    component: () => import(/* webpackChunkName: "about" */ '../views/DocsMenu.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/DocsMenu.vue'),
   },
   {
     path: '/admin/login',
-    name: 'Login',
+    name: 'AdminLogin',
     component: () => import(/* webpackChunkName: "about" */ '../views/Login.vue')
   },
   {
     path: '/admin',
-    name: 'Dashboard',
+    name: 'AdminDashboard',
     component: () => import(/* webpackChunkName: "about" */ '../views/Dashboard.vue')
   },
   {
+    path: '/admin/create/category',
+    name: 'AdminCreateCategory',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/AddCategory.vue')
+  },
+  {
+    path: '/admin/edit/category/:id',
+    name: 'AdminEditCategory',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/EditCategory.vue')
+  },
+  {
     path: '/admin/items',
-    name: 'SubCategories',
+    name: 'AdminSubCategories',
     component: () => import(/* webpackChunkName: "about" */ '../views/Item.vue')
   },
   {
-    path: '/admin/create/category',
-    name: 'CreateCategory',
-    component: () => import(/* webpackChunkName: "about" */ '../views/admin/AddCategory.vue')
+    path: '/admin/sets',
+    name: 'AdminSets',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/Set.vue')
+  },
+  {
+    path: '/admin/set/create',
+    name: 'AdminSetCreate',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/SetCreate.vue')
+  },
+  {
+    path: '/admin/set/edit/:id',
+    name: 'AdminEditSet',
+    component: () => import(/* webpackChunkName: "about" */ '../views/admin/SetEdit.vue')
   },
   {
     path: '/about',
@@ -56,9 +69,6 @@ const routes = [
   {
     path: "/:catchAll(.*)",
     component: () => import(/* webpackChunkName: "about" */ '../views/Docs.vue'),
-    meta: {
-      requiresAuth: false
-    }
   }
 ]
 

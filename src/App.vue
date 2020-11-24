@@ -1,43 +1,62 @@
 <template>
-  <navbar></navbar>
-  <!-- <sidebar></sidebar> -->
+  <navbar v-if="isUser" @display-search="openModal"></navbar>
+  <search-modal @close="closeModal" :display="display"></search-modal>
   <div class="bg-gray-100 text-gray-900 tracking-wider leading-normal">
     <div
+      v-if="isUser"
       class="container w-full h-auto flex flex-wrap mx-auto px-2 pt-8 lg:pt-16 mt-2"
     >
-      <sidebar :menu="menu"></sidebar>
+      <sidebar v-if="isUser"></sidebar>
+      <router-view />
+    </div>
+    <div v-else>
       <router-view />
     </div>
   </div>
-  <Footer />
+  <Footer v-if="isUser" />
 </template>
 
 <script>
 import Navbar from "./components/Navbar.vue";
+import SearchModal from "./components/SearchModal.vue";
 import Sidebar from "./components/Sidebar2.vue";
 import Footer from "./components/Footer.vue";
-import axios from "axios";
+
 export default {
   data() {
     return {
       open: false,
       menu: [],
+      display: false,
+      isUser: false,
     };
   },
   components: {
     Navbar,
     Sidebar,
     Footer,
+    SearchModal,
   },
-  methods: {
-    getMenuItems() {
-      axios.get(`user/category`).then((response) => {
-        this.menu = response.data;
-      });
+  watch: {
+    $route(to) {
+      if (to.name) {
+        if (to.name.toLowerCase().includes("admin")) {
+          this.isUser = false;
+        } else {
+          this.isUser = true;
+        }
+      } else {
+        this.isUser = true;
+      }
     },
   },
-  created() {
-    this.getMenuItems();
+  methods: {
+    openModal() {
+      this.display = true;
+    },
+    closeModal() {
+      this.display = false;
+    },
   },
 };
 </script>
@@ -87,8 +106,8 @@ export default {
   background: none;
 }
 .ldio-z7lwnyf26q {
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
   position: relative;
   transform: translateZ(0) scale(0.88);
   backface-visibility: hidden;

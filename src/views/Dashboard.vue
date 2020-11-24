@@ -18,14 +18,14 @@
 
         <div class="flex">
           <div
-            class="mr-6 mt-8 py-2 w-full flex-shrink-0 flex flex-col bg-white dark:bg-gray-600 rounded-lg"
+            class="mr-6 mt-8 py-2 w-full flex-shrink-0 flex flex-col bg-white dark:bg-gray-600 shadow-sm"
           >
             <h3
               class="flex flex-col px-5 py-1 text-lg font-semibold dark:text-gray-300"
             >
               <span>Categories</span>
             </h3>
-            <div class="flex flex-col px-5 py-3">
+            <div class="flex flex-col p-8 py-3">
               <category-table
                 :changed="updatedRecordInSubCategory"
                 @category-count="noOfCategory"
@@ -33,12 +33,20 @@
             </div>
           </div>
         </div>
-
         <div class="flex">
-          <sub-category
-            :changed="updateCategory"
-            @sub-category-count="noOfSubCategory"
-          ></sub-category>
+          <div
+            class="mr-6 mt-8 py-2 w-full flex-shrink-0 flex flex-col bg-white shadow-sm"
+          >
+            <h3 class="flex flex-col px-5 py-1 text-lg font-semibold">
+              <span>Sub-categories</span>
+            </h3>
+            <div class="flex flex-col p-8 py-3">
+              <sub-category
+                :changed="updateCategory"
+                @sub-category-count="noOfSubCategory"
+              ></sub-category>
+            </div>
+          </div>
         </div>
       </main>
     </div>

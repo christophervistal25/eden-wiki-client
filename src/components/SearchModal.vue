@@ -1,139 +1,357 @@
 <template>
-  <div v-show="display" class="fixed z-10 inset-0 overflow-y-auto">
+  <div>
     <div
-      class="items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0"
+      v-if="display"
+      class="overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none justify-center items-center flex"
     >
-      <!--
-      Background overlay, show/hide based on modal state.
+      <div class="relative w-auto my-6 mx-auto max-w-3xl">
+        <!--content-->
+        <div
+          class="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none"
+        >
+          <!--header-->
+          <div
+            class="flex flex-col items-start justify-between p-5 border-b border-solid border-gray-300 rounded-t"
+          >
+            <button
+              class="p-1 ml-auto bg-transparent border-0 text-black opacity-5 float-right text-3xl leading-none font-semibold outline-none focus:outline-none"
+              @click="close"
+            >
+              <span
+                class="bg-transparent text-red-500 opacity-5 h-6 w-6 text-2xl block outline-none focus:outline-none"
+              >
+                ×
+              </span>
+            </button>
 
-      Entering: "ease-out duration-300"
-        From: "opacity-0"
-        To: "opacity-100"
-      Leaving: "ease-in duration-200"
-        From: "opacity-100"
-        To: "opacity-0"
-    -->
-      <div class="fixed inset-0 transition-opacity">
-        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
-      </div>
+            <small class="text-green-700"
+              >Don't forget to press enter after you input.</small
+            >
+            <input
+              autofocus
+              focus
+              :class="hasError"
+              class="rounded block w-full bg-white border border-gray-300 py-4 px-4 leading-tight focus:outline-none focus:border-gray-400"
+              type="text"
+              v-model="searchKeyword"
+              placeholder="e.g. (Leaf Suit)"
+              @keyup.enter="search"
+            />
+          </div>
+          <!--body-->
+          <div
+            class="relative px-6 py-2 flex-auto overflow-y-auto"
+            style="height: 60vh; width: 40vw"
+          >
+            <svg
+              v-show="searchProcess"
+              class="h-10 w-10 ml-auto mr-auto"
+              viewBox="0 0 38 38"
+              stroke="currentColor"
+              stroke-opacity=".5"
+            >
+              <g fill="none" fill-rule="evenodd">
+                <g transform="translate(1 1)" stroke-width="2">
+                  <circle stroke-opacity=".3" cx="18" cy="18" r="18"></circle>
+                  <path d="M36 18c0-9.94-8.06-18-18-18">
+                    <animateTransform
+                      attributeName="transform"
+                      type="rotate"
+                      from="0 18 18"
+                      to="360 18 18"
+                      dur="1s"
+                      repeatCount="indefinite"
+                    ></animateTransform>
+                  </path>
+                </g>
+              </g>
+            </svg>
 
-      <!-- This element is to trick the browser into centering the modal contents. -->
-      <span class="hidden sm:inline-block sm:align-middle sm:h-screen"></span
-      >&#8203;
-      <!--
-      Modal panel, show/hide based on modal state.
-
-      Entering: "ease-out duration-300"
-        From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-        To: "opacity-100 translate-y-0 sm:scale-100"
-      Leaving: "ease-in duration-200"
-        From: "opacity-100 translate-y-0 sm:scale-100"
-        To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-    -->
-      <div
-        class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full overflow-y-scroll overscroll-y-auto"
-        style="height: 80vh"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-headline"
-      >
-        <div class="bg-white pt-5 pb-4">
-          <p class="p-2 text-sm text-gray-700 font-body">
-            Press "/" again to close this dialog
-          </p>
-          <div class="sm:flex sm:items-start">
-            <div class="px-2 flex flex-col flex-grow">
-              <input
-                autofocus
-                focus
-                :class="hasError"
-                class="appearance-none block w-full bg-white text-gray-700 border border-gray- rounded py-4 px-4 mb-3 leading-tight focus:outline-none focus:border-gray-300"
-                type="text"
-                v-model="searchKeyword"
-                placeholder="Search Docs"
-                @keyup.enter="search"
-              />
-
-              <hr />
-
-              <div class="flex flex-wrap justify-center">
-                <div class="mt-3">
-                  <svg
-                    v-show="searchProcess"
-                    class="h-10 w-10"
-                    viewBox="0 0 38 38"
-                    stroke="currentColor"
-                    stroke-opacity=".5"
+            <div v-if="!hasItemSelect">
+              <div
+                class="cursor-pointer"
+                v-for="(item, index) in items"
+                v-bind:key="index"
+              >
+                <div
+                  class="capitalize text-sm bg-green-500 text-white focus:outline-none px-1 h-full w-auto"
+                >
+                  <span>{{ item.sub_category.category.name }} </span>
+                  -
+                  <span
+                    >{{
+                      item.sub_category.name
+                        .replace("IK3", "")
+                        .replace(/_/gi, " ")
+                        .replace("TEXT", "")
+                        .toLowerCase()
+                    }}
+                  </span>
+                </div>
+                <div
+                  @click="userSelectAnItem(item)"
+                  class="px-2 py-3 bg-gray-100 mb-5 flex flex-row border-gray-100"
+                >
+                  <img
+                    class="object-scale-down mr-5"
+                    :src="'/images/' + item.icon"
+                    alt=""
+                  />
+                  <div class="capitalize mt-auto">
+                    {{ item.name }}
+                  </div>
+                  <span
+                    v-if="item.set"
+                    class="text-sm bg-blue-500 text-white focus:outline-none rounded-lg px-1 h-full capitalize ml-1"
+                    >set part</span
                   >
-                    <g fill="none" fill-rule="evenodd">
-                      <g transform="translate(1 1)" stroke-width="2">
-                        <circle
-                          stroke-opacity=".3"
-                          cx="18"
-                          cy="18"
-                          r="18"
-                        ></circle>
-                        <path d="M36 18c0-9.94-8.06-18-18-18">
-                          <animateTransform
-                            attributeName="transform"
-                            type="rotate"
-                            from="0 18 18"
-                            to="360 18 18"
-                            dur="1s"
-                            repeatCount="indefinite"
-                          ></animateTransform>
-                        </path>
-                      </g>
-                    </g>
-                  </svg>
+                  <span class="text-sm mt-auto ml-auto text-green-700"
+                    >Click for more info</span
+                  >
                 </div>
               </div>
-
-              <!-- <svg width="20" height="20" viewBox="0 0 20 20">
-                    <path
-                      d="M17 6v12c0 .52-.2 1-1 1H4c-.7 0-1-.33-1-1V2c0-.55.42-1 1-1h8l5 5zM14 8h-3.13c-.51 0-.87-.34-.87-.87V4"
-                      stroke="currentColor"
-                      fill="none"
-                      fill-rule="evenodd"
-                      stroke-linejoin="round"
-                    ></path>
-                  </svg> -->
-              <div v-for="(item, index) in items" v-bind:key="index">
-                <div
-                  class="shadow max-w-screen-lg px-2 bg-white rounded-lg mt-2"
+              <div class="text-center mt-2" v-if="items.length >= maxNoDisplay">
+                <button
+                  class="bg-gray-200 hover:shadow text-sm font-semibold px-2 py-2 rounded-lg"
                 >
-                  <h2 class="rounded py-4 capitalize px-4 mb-1 cursor-pointer">
-                    <span class="font-semibold"
-                      >{{ item.sub_category.category.name }}
-                    </span>
-                    /
-                    <span
-                      >{{
-                        item.sub_category.name
-                          .replace("IK3", "")
+                  Show more result
+                </button>
+              </div>
+            </div>
+            <div v-else>
+              <img
+                class="object-scale-down mr-auto ml-auto"
+                :src="'/images/' + selectedItem.icon"
+                alt=""
+              />
+              <p class="capitalize mt-2 text-center">
+                <span>{{ selectedItem.sub_category.category.name }}</span>
+                / {{ selectedItem.sub_category.name.toLowerCase() }} /
+                <span class="font-semibold"> {{ selectedItem.name }}</span>
+              </p>
+              <div class="text-center">
+                <p
+                  v-if="selectedItem.description != 'N/A'"
+                  class="text-gray-700 px-2"
+                >
+                  {{ selectedItem.description }}
+                </p>
+                <p
+                  v-else-if="selectedItem.description == 'N/A'"
+                  class="text-red-700 px-2"
+                >
+                  No available description
+                </p>
+                <p v-else class="text-red-700 px-2">No available description</p>
+              </div>
+
+              <table class="table-fixed mt-2 ml-auto mr-auto">
+                <thead>
+                  <tr>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 capitalize text-sm font-semibold text-center"
+                    >
+                      Gender
+                    </td>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 capitalize text-sm font-semibold text-center"
+                    >
+                      Job
+                    </td>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm font-semibold text-center"
+                    >
+                      Level
+                    </td>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm font-semibold text-center"
+                    >
+                      Item Effect
+                    </td>
+                    <!-- <td class="w-64 border border-gray-300 px-4 py-2 text-sm">
+                    Attack / Def
+                  </td> -->
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm font-semibold text-center"
+                    >
+                      Handed
+                    </td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm capitalize text-center"
+                    >
+                      {{
+                        selectedItem.gender === "="
+                          ? "Any"
+                          : selectedItem.gender.toLowerCase()
+                      }}
+                    </td>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm capitalize text-center"
+                    >
+                      {{
+                        selectedItem.job === "="
+                          ? "Any"
+                          : selectedItem.job.replace("_", " ").toLowerCase()
+                      }}
+                    </td>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm text-center"
+                    >
+                      {{ selectedItem.level == 0 ? 1 : selectedItem.level }}
+                    </td>
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm align-middle text-center"
+                    >
+                      {{
+                        selectedItem.effect_1 == "= : ="
+                          ? ""
+                          : selectedItem.effect_1
+                      }}
+                      <br />
+                      {{
+                        selectedItem.effect_2 == "= : ="
+                          ? ""
+                          : selectedItem.effect_2
+                      }}
+                      <br />
+                      {{
+                        selectedItem.effect_3 == "= : ="
+                          ? ""
+                          : selectedItem.effect_3
+                      }}
+                    </td>
+                    <!-- <td
+                    class="text-center w-64 border border-gray-300 px-4 py-2 text-sm"
+                  >
+                    {{ selectedItem.ability_min }} - {{ selectedItem.ability_max }}
+                  </td> -->
+                    <td
+                      class="w-64 border border-gray-300 px-4 py-2 text-sm text-center"
+                    >
+                      <span v-if="selectedItem.handed === 'HD ONE'"
+                        >One-Handed</span
+                      >
+                      <span v-else-if="selectedItem.handed === 'HD TWO'"
+                        >Two-Handed</span
+                      >
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div v-if="selectedItem.set">
+                <hr class="my-2" />
+
+                <span class="font-semibold">Parts : </span>
+                <div class="container mt-0">
+                  <div class="flex flex-row">
+                    <img
+                      class="object-contain mr-2"
+                      v-for="(icon, index) in getIcons(
+                        selectedItem.set.type,
+                        selectedItem.icon
+                      )"
+                      :key="index"
+                      :src="'/images/' + icon"
+                      alt=""
+                    />
+                  </div>
+
+                  <span
+                    class="capitalize"
+                    v-for="(effect, index) in JSON.parse(
+                      selectedItem.set.parts
+                    )"
+                    :key="index"
+                  >
+                    <button
+                      class="cursor-text ml-2 bg-green-500 text-white active:bg-green-600 uppercase text-sm px-3 outline-none focus:outline-none mt-3 rounded-lg"
+                      style="transition: all 0.15s ease"
+                    >
+                      {{
+                        effect
                           .replace(/_/gi, " ")
-                          .replace("TEXT", "")
+                          .replace(/parts/gi, "")
                           .toLowerCase()
                       }}
-                      /</span
-                    >
-                    {{ item.name }}
-                    <br />
-                    <span class="text-sm text-gray-600 break-all">{{
-                      item.description
-                    }}</span>
-                  </h2>
+                    </button>
+                  </span>
                 </div>
+
+                <hr class="my-2" />
+                <span class="font-semibold">Set Effect :</span>
+                <table class="table-fixed mt-2 ml-auto mr-auto">
+                  <thead>
+                    <tr class="text-center font-semibold">
+                      <td
+                        class="w-64 border border-gray-300 px-4 py-2 capitalize text-sm"
+                      >
+                        No of parts
+                      </td>
+                      <td
+                        class="w-64 border border-gray-300 px-4 py-2 capitalize text-sm"
+                      >
+                        Attributes
+                      </td>
+                      <td
+                        class="w-64 border border-gray-300 px-4 py-2 capitalize text-sm"
+                      >
+                        Attributes Value
+                      </td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      v-for="(effect, index) in JSON.parse(
+                        selectedItem.set.effects
+                      )"
+                      :key="index"
+                    >
+                      <td
+                        class="text-center w-64 border border-gray-300 px-4 py-2 text-sm capitalize"
+                      >
+                        {{ index.split("_")[index.split("_").length - 1] }}/{{
+                          Object.keys(JSON.parse(selectedItem.set.parts)).length
+                        }}
+                      </td>
+                      <td
+                        class="w-64 border border-gray-300 px-4 py-2 text-sm capitalize text-center"
+                      >
+                        {{
+                          index
+                            .replace(/_/gi, " ")
+                            .replace(/^DST/, "")
+                            .replace(/\d+/g, "")
+                        }}
+                      </td>
+                      <td
+                        class="w-64 text-center border border-gray-300 px-4 py-2 text-sm capitalize"
+                      >
+                        {{ effect }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>
+          <!--footer-->
+          <div
+            class="flex items-center justify-end p-6 border-t border-solid border-gray-300 rounded-b"
+          ></div>
         </div>
       </div>
     </div>
+    <div v-if="display" class="opacity-25 fixed inset-0 z-40 bg-black"></div>
   </div>
 </template>
+
 <script>
 import axios from "axios";
+import { getIcons } from "../custom/helpers.js";
 export default {
   props: {
     display: Boolean,
@@ -144,21 +362,55 @@ export default {
       searchProcess: false,
       searchKeyword: "",
       hasError: "",
+      selectedItem: {},
+      hasItemSelect: false,
+
+      maxNoDisplay: 11,
     };
   },
   methods: {
+    getIcons,
     search() {
-      this.searchProcess = true;
       this.items = [];
-      axios
-        .get(`user/search/item/${this.searchKeyword}`)
-        .then((response) => {
-          this.searchProcess = false;
-          this.items = response.data;
-        })
-        .catch(() => {
-          this.searchProcess = false;
-        });
+      if (this.searchKeyword) {
+        this.hasError = "";
+        this.searchProcess = true;
+
+        axios
+          .get(`user/search/item/${this.searchKeyword}`)
+          .then((response) => {
+            this.searchProcess = false;
+            this.items = response.data;
+          })
+          .catch(() => {
+            this.searchProcess = false;
+          });
+      } else {
+        this.hasError = "border border-red-500  focus:border-red-500";
+      }
+    },
+    close() {
+      this.items = [];
+      this.$emit("close");
+      this.hasItemSelect = false;
+      this.selectedItem = {};
+      this.searchKeyword = "";
+    },
+    userSelectAnItem(item) {
+      this.hasItemSelect = true;
+      this.selectedItem = item;
+      // this.selectedItem.set.no_of_parts = Object.keys(
+      //   JSON.parse(item.set.parts)
+      // ).length;
+      // console.log(this.selectedItem);
+    },
+  },
+  watch: {
+    searchKeyword(to) {
+      this.hasItemSelect = false;
+      if (!to && to.length == 0) {
+        this.items = [];
+      }
     },
   },
 };
@@ -171,13 +423,13 @@ export default {
 
 /* Track */
 ::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 2px grey;
-  border-radius: 5px;
+  /* box-shadow: inset 0 0 1.5px rgb(66, 64, 64); */
+  /* border-radius: 5px; */
 }
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: #546070;
-  border-radius: 15px;
+  background: #e2e8f0;
+  /* border-radius: 15px; */
 }
 </style>

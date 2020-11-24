@@ -35,13 +35,13 @@
         To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
     -->
       <div
-        class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
+        class="inline-block align-bottom bg-white rounded-sm text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full"
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-headline"
       >
         <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left capitalize">
             <slot name="header"> Default title </slot>
 
             <div class="mt-2">
@@ -60,7 +60,7 @@
               </button>
             </span>
             <span
-              class="mt-3 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto"
+              class="mt-2 flex w-full rounded-md shadow-sm sm:mt-0 sm:w-auto"
             >
               <button
                 type="button"

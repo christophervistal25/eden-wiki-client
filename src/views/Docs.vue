@@ -13,13 +13,20 @@
     <!--divider-->
     <hr class="my-2" />
 
-    <div class="menu__item" v-for="item in menu" :key="item.id">
+    <div class="menu__item" v-for="item in allCategories" :key="item.id">
       <!--Title-->
 
       <h2
-        class="break-normal text-gray-700 px-2 py-2 text-xl transition duration-200 ease-in-out hover:text-green-500"
+        class="break-normal text-gray-700 px-2 py-2 text-xl transition duration-200 ease-in-out hover:text-green-500 capitalize"
       >
-        <router-link :to="`/docs/${item.id}`"> # {{ item.name }} </router-link>
+        <router-link
+          :to="{
+            name: 'DocsMenu',
+            params: { menu: item.name.toLowerCase(), page: 1 },
+          }"
+        >
+          # {{ item.name }}
+        </router-link>
       </h2>
 
       <!--Card-->
@@ -27,7 +34,9 @@
             index == 0 ? 'border-l-4 border-transparent border-green-600' : ''
           " -->
       <div class="p-8 lg:mt-0 leading-normal rounded shadow bg-white mb-5">
-        <p class="text-sm text-gray-700 py-2 px-2">{{ item.description }}</p>
+        <p class="text-sm text-gray-700 py-2 px-2 text-justify">
+          <span class="ml-5"></span>{{ item.description }}
+        </p>
         <hr class="mb-3" />
         <div
           class="inline-block"
@@ -46,13 +55,20 @@
             "
           >
             <small>
-              <button
-                class="bg-green-700 text-white active:bg-green-800 text-sm px-3 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1"
-                type="button"
-                style="transition: all 0.15s ease"
+              <router-link
+                :to="{
+                  name: 'DocsMenu',
+                  params: { menu: item.name.toLowerCase(), page: 1 },
+                }"
               >
-                Tell me more about {{ item.name }}
-              </button>
+                <button
+                  class="bg-green-600 text-white active:bg-green-800 text-sm px-3 py-2 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 uppercase"
+                  type="button"
+                  style="transition: all 0.15s ease"
+                >
+                  More {{ item.name }}
+                </button>
+              </router-link>
             </small>
           </div>
         </div>
@@ -69,27 +85,24 @@
 import SubMenu from "../components/SubMenu.vue";
 // import ImageCollage from "../components/ImageCollage.vue";
 
-import axios from "axios";
+// import axios from "axios";
+import { mapGetters, mapActions } from "vuex";
 export default {
   components: {
-    // Sidebar,
     SubMenu,
-    // ImageCollage,
   },
   data() {
     return {
       menu: [],
+      selected: "",
     };
   },
   methods: {
-    getMenuItems() {
-      axios.get(`user/category`).then((response) => {
-        this.menu = response.data;
-      });
-    },
+    ...mapActions(["FETCH_CATEGORIES"]),
   },
+  computed: mapGetters(["allCategories"]),
   created() {
-    this.getMenuItems();
+    this.FETCH_CATEGORIES();
   },
 };
 </script>

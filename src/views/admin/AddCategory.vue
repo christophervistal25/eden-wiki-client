@@ -21,16 +21,28 @@
               <span>Create Category</span>
             </h3>
             <div class="flex flex-col px-5 py-3">
+              <div v-if="errors.length" class="mb-2">
+                <p
+                  class="text-red-500 text-sm ml-3"
+                  v-for="(error, index) in errors"
+                  :key="index"
+                >
+                  <span>&#9862;</span> {{ error }}
+                </p>
+                <hr class="my-2" />
+              </div>
+
               <form @submit.prevent="">
                 <div class="w-full px-3">
                   <label
                     class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
                   >
-                    Title
+                    name
                   </label>
                   <input
                     class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     type="text"
+                    v-model="category.name"
                   />
                   <!-- <p class="text-gray-600 text-xs italic">
                     Make it as long and as crazy as you'd like
@@ -43,9 +55,10 @@
                     Description
                   </label>
                   <textarea
-                    class="w-full appearance-none appearance-none w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    class="w-full appearance-none bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     cols="30"
                     rows="10"
+                    v-model="category.description"
                   ></textarea>
                 </div>
 
@@ -73,7 +86,7 @@
                   >
                 </div>
 
-                <div v-if="!asMenu">
+                <div v-show="!asMenu">
                   <!-- Two columns -->
                   <ul class="flex mt-2 justify-center">
                     <li
@@ -315,15 +328,15 @@
                       id="editor"
                       @keydown="updateContent"
                       style="resize: vertical; overflow: auto"
-                      class="w-4/5 ml-auto mr-auto bg-gray-700 text-white h-auto p-5 focus:outline-none shadow-2xl rounded"
+                      class="w-4/5 ml-auto mr-auto bg-gray-700 text-white h-screen p-5 focus:outline-none shadow-2xl rounded"
                       contenteditable="true"
                     ></div>
                   </div>
                 </div>
                 <div class="mt-5 float-right mr-2">
                   <button
-                    @click="categorySubmit"
-                    class="shadow bg-green-500 hover:bg-green-400 focus:border-green-500 focus:outline-none text-white font-bold py-2 px-4 rounded"
+                    @click="createCategorySubmit"
+                    class="bg-green-500 hover:bg-green-400 focus:border-green-500 focus:outline-none text-white py-2 px-4 rounded"
                     type="button"
                   >
                     Create Category
@@ -340,12 +353,15 @@
 
 <script>
 import Sidebar from "../../components/Dashboard/Sidebar.vue";
+import axios from "axios";
+import swal from "sweetalert";
 
 export default {
   data() {
     return {
       asMenu: true,
-      content: null,
+      category: {},
+      errors: [],
 
       features: {
         bold: false,
@@ -422,8 +438,30 @@ export default {
         document.execCommand("insertimage", false, input);
       }
     },
-    categorySubmit() {
-      console.log("hello world");
+    createCategorySubmit() {
+      this.errors = [];
+      let content = document.querySelector("#editor");
+      if (!this.category.name) {
+        this.errors.push("The name field is required.");
+      }
+
+      if (!this.category.description) {
+        this.errors.push("The description field is required.");
+      }
+
+      if (!this.asMenu && !content.innerHTML) {
+        this.errors.push("The content field is required.");
+      }
+
+      if (this.errors.length === 0) {
+        this.category.content = content.innerHTML;
+        this.category.type = this.asMenu;
+
+        axios.post("admin/category/create", this.category).then(() => {
+          this.category = {};
+          swal("Good job!", `Successfully create a category`, "success");
+        });
+      }
     },
   },
   created() {},
@@ -435,9 +473,9 @@ export default {
 /* @apply rules for documentation, these do not work as inline style */
 .toggle-checkbox:checked {
   right: 0;
-  border-color: #68D391;
+  border-color: #68d391;
 }
 .toggle-checkbox:checked + .toggle-label {
-  background-color: #68D391;
+  background-color: #68d391;
 }
 </style>

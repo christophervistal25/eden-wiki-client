@@ -5,16 +5,14 @@ import '@/assets/styles/app.css'
 import router from './router'
 import NProgress from 'nprogress'
 import 'nprogress/nprogress.css';
+import store from './store'
 
 
 
 
-// axios.defaults.baseURL = 'http://localhost:8000/api/'
-axios.defaults.baseURL = 'https://eden-wiki.herokuapp.com/api/'
+axios.defaults.baseURL = 'http://192.168.1.5:8000/api/'
+// axios.defaults.baseURL = 'https://eden-wiki.herokuapp.com/api/'
 
-// var inceptorInstance = axios.create({
-//     baseURL: 'http://localhost:8000/api/'
-// })
 
 let isRefreshing = false;
 
@@ -44,10 +42,12 @@ axios.interceptors.response.use(function (response) {
         router.replace('/admin/login');
     }
     // Any status codes that falls outside the range of 2xx cause this function to trigger
-    // Do something with response error
+    // Do something with response error.
+    NProgress.done();
     return Promise.reject(error);
 });
 
 const app = createApp(App)
 app.use(router)
+app.use(store)
 app.mount('#app')

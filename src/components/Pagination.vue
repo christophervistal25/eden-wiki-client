@@ -1,7 +1,7 @@
 <template>
   <div>
     <div
-      class="bg-white px-4 py-3 flex flex-row items-center justify-between border-t border-gray-200 rounded"
+      class="bg-white px-4 py-3 flex flex-row items-center justify-between rounded shadow mb-2"
     >
       <div class="justify-between sm:hidden">
         <a
@@ -189,24 +189,15 @@ export default {
       this.$router.push(`/docs/${this.main}/${this.type}/${page}`);
     },
     next() {
-      console.log(this.next_link);
       if (this.next_link != null) {
         this.$router.push(`/${this.next_link.replace("item", "docs")}`);
       }
     },
     previous() {
-      console.log(this.previous_link);
       if (this.previous_link != null) {
         this.$router.push(`/${this.previous_link.replace("item", "docs")}`);
       }
     },
-  },
-  created() {
-    // this.no_of_display = 9;
-    // let calculation = parseInt(this.no_of_display) + parseInt(this.page);
-    // if (calculation <= this.no_of_items) {
-    //   this.no_of_display = calculation;
-    // }
   },
 };
 </script>
